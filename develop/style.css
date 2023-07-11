@@ -1,0 +1,50 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+}
+
+form {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+input[type="text"] {
+  flex: 1;
+  padding: 5px;
+}
+
+button {
+  padding: 5px 10px;
+}
+
+#search-history {
+  margin-bottom: 20px;
+}
+
+#current-weather,
+#forecast {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.weather-card {
+  flex: 1 0 200px;
+  padding: 10px;
+  margin: 5px;
+  text-align: center;
+  background-color: #f2f2f2;
+}
+
+.weather-card h3 {
+  margin-top: 0;
+}
+
+.weather-card img {
+  width: 50px;
+  height: 50px;
+}
