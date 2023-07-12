@@ -6,11 +6,16 @@ const searchHistory = document.getElementById('search-history');
 const currentWeather = document.getElementById('current-weather');
 const forecast = document.getElementById('forecast');
 
-searchForm.addEventListener('submit', function (e) {
+searchForm.addEventListener('submit', handleFormSubmit);
+
+function handleFormSubmit(e) {
   e.preventDefault();
   const city = cityInput.value;
-  getWeatherData(city);
-});
+  if (city.trim() !== '') {
+    getWeatherData(city);
+    cityInput.value = '';
+  }
+}
 
 function getWeatherData(city) {
   fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`)
@@ -39,50 +44,65 @@ function displayCurrentWeather(data) {
   const humidity = data.main.humidity;
   const windSpeed = data.wind.speed;
 
-  currentWeather.innerHTML = `
-    <div class="weather-card">
-      <h3>${data.name}</h3>
-      <p>Date: ${getCurrentDate()}</p>
-      <img src="https://openweathermap.org/img/w/${weather.icon}.png" alt="${weather.description}">
-      <p>Temperature: ${kelvinToCelsius(temperature)}°C</p>
-      <p>Humidity: ${humidity}%</p>
-      <p>Wind Speed: ${windSpeed} m/s</p>
-    </div>
+  const currentWeatherCard = document.createElement('div');
+  currentWeatherCard.classList.add('weather-card');
+  currentWeatherCard.innerHTML = `
+    <h3>${data.name}</h3>
+    <p>Date: ${getCurrentDate()}</p>
+    <img src="https://openweathermap.org/img/w/${weather.icon}.png" alt="${weather.description}">
+    <p>Temperature: ${kelvinToCelsius(temperature)}°C</p>
+    <p>Humidity: ${humidity}%</p>
+    <p>Wind Speed: ${windSpeed} m/s</p>
   `;
+
+  clearElement(currentWeather);
+  currentWeather.appendChild(currentWeatherCard);
 }
 
 function displayForecast(data) {
   const forecastData = data.list;
 
-  let forecastHTML = '';
-  for (let i = 0; i < forecastData.length; i += 8) {
-    const weather = forecastData[i].weather[0];
-    const temperature = forecastData[i].main.temp;
-    const humidity = forecastData[i].main.humidity;
-    const windSpeed = forecastData[i].wind.speed;
-    const date = formatDate(forecastData[i].dt);
+  const forecastCards = forecastData
+    .filter((_, index) => index % 8 === 0)
+    .map(forecast => createForecastCard(forecast));
 
-    forecastHTML += `
-      <div class="weather-card">
-        <h3>${date}</h3>
-        <img src="https://openweathermap.org/img/w/${weather.icon}.png" alt="${weather.description}">
-        <p>Temperature: ${kelvinToCelsius(temperature)}°C</p>
-        <p>Humidity: ${humidity}%</p>
-        <p>Wind Speed: ${windSpeed} m/s</p>
-      </div>
-    `;
-  }
+  clearElement(forecast);
+  forecastCards.forEach(card => forecast.appendChild(card));
+}
 
-  forecast.innerHTML = forecastHTML;
+function createForecastCard(forecast) {
+  const weather = forecast.weather[0];
+  const temperature = forecast.main.temp;
+  const humidity = forecast.main.humidity;
+  const windSpeed = forecast.wind.speed;
+  const date = formatDate(forecast.dt);
+
+  const forecastCard = document.createElement('div');
+  forecastCard.classList.add('weather-card');
+  forecastCard.innerHTML = `
+    <h3>${date}</h3>
+    <img src="https://openweathermap.org/img/w/${weather.icon}.png" alt="${weather.description}">
+    <p>Temperature: ${kelvinToCelsius(temperature)}°C</p>
+    <p>Humidity: ${humidity}%</p>
+    <p>Wind Speed: ${windSpeed} m/s</p>
+  `;
+
+  return forecastCard;
 }
 
 function addToSearchHistory(city) {
   const searchEntry = document.createElement('p');
   searchEntry.textContent = city;
-  searchEntry.addEventListener('click', function () {
+  searchEntry.addEventListener('click', () => {
     getWeatherData(city);
   });
   searchHistory.appendChild(searchEntry);
+}
+
+function clearElement(element) {
+  while (element.firstChild) {
+    element.firstChild.remove();
+  }
 }
 
 function getCurrentDate() {
