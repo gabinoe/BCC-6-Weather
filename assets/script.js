@@ -28,14 +28,6 @@ function getWeatherData(city) {
       console.error('Error:', error);
     });
 
-  fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}`)
-    .then(response => response.json())
-    .then(data => {
-      displayForecast(data);
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
 }
 
 function displayCurrentWeather(data) {
