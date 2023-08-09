@@ -30,3 +30,7 @@ Clone the repository and open the `index.html` file in a web browser.
 - CSS
 - JavaScript
 - OpenWeatherMap API (requires a valid API key)
+  
+  ## LINKS:
+ - repo: https://github.com/gabinoe/BCC-6-Weather
+ - pages: https://gabinoe.github.io/BCC-6-Weather
